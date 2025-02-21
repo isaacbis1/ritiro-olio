@@ -19,7 +19,7 @@ import {
   orderBy,
   deleteDoc
 } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
-import { PDFDocument } from "https://unpkg.com/pdf-lib/dist/pdf-lib.min.js";
+
 
 // Sostituisci con i dati del tuo progetto Firebase
 const firebaseConfig = {
