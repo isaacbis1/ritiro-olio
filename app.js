@@ -22,6 +22,10 @@ import {
    1. CONFIGURAZIONE FIREBASE
    (Inserisci i tuoi valori di configurazione)
 ------------------------------------------------------------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+
+// Configurazione Firebase (verifica che i dati siano corretti!)
 const firebaseConfig = {
   apiKey: "AIzaSyBZkCXioFje39FqmUFkM2GqEAcPvVo7csg",
   authDomain: "ritiro-olio.firebaseapp.com",
@@ -32,12 +36,21 @@ const firebaseConfig = {
   measurementId: "G-Q0WCW8T0B1"
 };
 
-// Inizializza Firebase
 const app = initializeApp(firebaseConfig);
-
-// Ottieni servizi Auth e Firestore
-const auth = getAuth(app);
 const db = getFirestore(app);
+
+// TEST: Aggiungere un documento nella raccolta "test"
+async function testFirestore() {
+  try {
+    await addDoc(collection(db, "test"), { name: "Prova", createdAt: new Date() });
+    console.log("✅ Documento creato con successo!");
+  } catch (error) {
+    console.error("❌ Errore Firestore:", error);
+  }
+}
+
+testFirestore();
+
 
 /* -------------------------------------------------------------
    2. Riferimenti a elementi del DOM
