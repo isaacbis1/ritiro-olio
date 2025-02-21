@@ -22,10 +22,13 @@ import {
 
 // Sostituisci i seguenti valori con quelli del tuo progetto Firebase
 const firebaseConfig = {
-  apiKey: "TUO_API_KEY",
-  authDomain: "TUO_PROJECT_ID.firebaseapp.com",
-  projectId: "TUO_PROJECT_ID",
-  appId: "1:1234567890:web:abcdefg"
+  apiKey: "AIzaSyBZkCXioFje39FqmUFkM2GqEAcPvVo7csg",
+  authDomain: "ritiro-olio.firebaseapp.com",
+  projectId: "ritiro-olio",
+  storageBucket: "ritiro-olio.firebasestorage.app",
+  messagingSenderId: "1088319614799",
+  appId: "1:1088319614799:web:e89cfc9c6a548b318c9f3a",
+  measurementId: "G-Q0WCW8T0B1"
 };
 
 const app = initializeApp(firebaseConfig);
