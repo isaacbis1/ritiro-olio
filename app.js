@@ -1,35 +1,7 @@
-// Importa le funzioni necessarie da Firebase (versione modular) via CDN
-// (Assicurati che le versioni corrispondano a quelle disponibili)
-import { 
-  initializeApp 
-} from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
 
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
-
-/* -------------------------------------------------------------
-   1. CONFIGURAZIONE FIREBASE
-   (Inserisci i tuoi valori di configurazione)
-------------------------------------------------------------- */
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBZkCXioFje39FqmUFkM2GqEAcPvVo7csg",
   authDomain: "ritiro-olio.firebaseapp.com",
@@ -40,105 +12,103 @@ const firebaseConfig = {
   measurementId: "G-Q0WCW8T0B1"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// TEST: Aggiungere un documento nella raccolta "test"
-async function testFirestore() {
+let currentUser = null;
+
+// LOGIN
+document.getElementById("login-btn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
   try {
-    await addDoc(collection(db, "test"), { name: "Prova", createdAt: new Date() });
-    console.log("✅ Documento creato con successo!");
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    currentUser = userCredential.user;
+    document.getElementById("login-section").classList.add("d-none");
+    document.getElementById("logout-section").classList.remove("d-none");
+
+    if (email === "admin@olio.com") {
+      document.getElementById("admin-section").classList.remove("d-none");
+      loadFatture();
+    } else {
+      document.getElementById("cliente-section").classList.remove("d-none");
+      loadFattureCliente(email);
+    }
   } catch (error) {
-    console.error("❌ Errore Firestore:", error);
+    alert("Errore: " + error.message);
   }
-}
+});
 
-testFirestore();
+// LOGOUT
+document.getElementById("logout-btn").addEventListener("click", async () => {
+  await signOut(auth);
+  location.reload();
+});
 
+// ADMIN: Aggiungi Fattura
+document.getElementById("aggiungi-fattura").addEventListener("click", async () => {
+  const email = document.getElementById("fattura-email").value;
+  const data = document.getElementById("fattura-data").value;
+  const importo = document.getElementById("fattura-importo").value;
+  const fileInput = document.getElementById("fattura-file").files[0];
 
-/* -------------------------------------------------------------
-   2. Riferimenti a elementi del DOM
-------------------------------------------------------------- */
-const loginBtn        = document.getElementById('login-btn');
-const createUserBtn   = document.getElementById('create-user-btn');
-const logoutBtn       = document.getElementById('logout-btn');
-const outputEl        = document.getElementById('output');
-
-/* -------------------------------------------------------------
-   3. FUNZIONE DI AIUTO PER MOSTRARE MESSAGGI
-------------------------------------------------------------- */
-function showOutput(message) {
-  if (outputEl) {
-    const now = new Date().toLocaleTimeString();
-    outputEl.innerHTML += `[${now}] ${message}<br/>`;
-    outputEl.scrollTop = outputEl.scrollHeight; // Scrolla in fondo
-  } else {
-    alert(message);
+  if (!email || !data || !importo || !fileInput) {
+    alert("Compila tutti i campi e carica un file.");
+    return;
   }
+
+  const reader = new FileReader();
+  reader.onload = async function(event) {
+    const base64File = event.target.result;
+
+    await addDoc(collection(db, "fatture"), {
+      cliente: email,
+      data: data,
+      importo: importo,
+      fileBase64: base64File
+    });
+
+    alert("Fattura aggiunta!");
+    loadFatture();
+  };
+  reader.readAsDataURL(fileInput);
+});
+
+// CARICA LE FATTURE (ADMIN)
+async function loadFatture() {
+  const querySnapshot = await getDocs(collection(db, "fatture"));
+  const listaFatture = document.getElementById("lista-fatture");
+  listaFatture.innerHTML = "";
+  
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    const li = document.createElement("li");
+    li.className = "list-group-item";
+    li.innerHTML = `Cliente: ${data.cliente} - Data: ${data.data} - Importo: €${data.importo} <button class="btn btn-sm btn-secondary ms-2" onclick="viewFattura('${data.fileBase64}')">Vedi</button>`;
+    listaFatture.appendChild(li);
+  });
 }
 
-/* -------------------------------------------------------------
-   4. LOGIN
-   Admin "di prova": admin@olio.com / admin123
-------------------------------------------------------------- */
-if (loginBtn) {
-  loginBtn.addEventListener('click', async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      
-      if (email === "admin@olio.com") {
-        showOutput("Benvenuto Admin! (UID: " + user.uid + ")");
-      } else {
-        showOutput("Login effettuato con successo! UID: " + user.uid);
-      }
-    } catch (error) {
-      console.error(error);
-      showOutput("Errore di login. " + error.message);
+// CARICA LE FATTURE PER IL CLIENTE
+async function loadFattureCliente(email) {
+  const querySnapshot = await getDocs(collection(db, "fatture"));
+  const listaFattureCliente = document.getElementById("lista-fatture-cliente");
+  listaFattureCliente.innerHTML = "";
+  
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    if (data.cliente === email) {
+      const li = document.createElement("li");
+      li.className = "list-group-item";
+      li.innerHTML = `Data: ${data.data} - Importo: €${data.importo} <button class="btn btn-sm btn-secondary ms-2" onclick="viewFattura('${data.fileBase64}')">Vedi</button>`;
+      listaFattureCliente.appendChild(li);
     }
   });
 }
 
-/* -------------------------------------------------------------
-   5. CREAZIONE NUOVO UTENTE
-------------------------------------------------------------- */
-if (createUserBtn) {
-  createUserBtn.addEventListener('click', async () => {
-    const newEmail = document.getElementById('new-email').value;
-    const newPassword = document.getElementById('new-password').value;
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, newEmail, newPassword);
-      const createdUser = userCredential.user;
-
-      // (Opzionale) Salvo i dati utente in Firestore
-      await addDoc(collection(db, "users"), {
-        uid: createdUser.uid,
-        email: createdUser.email,
-        createdAt: serverTimestamp()
-      });
-
-      showOutput("Utente creato con successo! UID: " + createdUser.uid);
-    } catch (error) {
-      console.error(error);
-      showOutput("Errore nella creazione dell'utente. " + error.message);
-    }
-  });
-}
-
-/* -------------------------------------------------------------
-   6. LOGOUT
-------------------------------------------------------------- */
-if (logoutBtn) {
-  logoutBtn.addEventListener('click', async () => {
-    try {
-      await signOut(auth);
-      showOutput("Logout effettuato con successo!");
-    } catch (error) {
-      console.error(error);
-      showOutput("Errore durante il logout. " + error.message);
-    }
-  });
-}
+// VISUALIZZA FATTURA
+window.viewFattura = (base64) => {
+  const newTab = window.open();
+  newTab.document.write(`<img src="${base64}" style="width:100%">`);
+};
