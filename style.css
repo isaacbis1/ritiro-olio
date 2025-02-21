@@ -1,0 +1,102 @@
+/* Reset di base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Font e body */
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(120deg, #f1f1f1, #dbdbdb);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container principale */
+.container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Titolo */
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Sezioni */
+.section {
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+/* Sottotitolo */
+.section h2 {
+  margin-bottom: 10px;
+  color: #444;
+}
+
+/* Form group */
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.form-group input[type="email"],
+.form-group input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Bottoni */
+button {
+  display: inline-block;
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.3s ease;
+  margin-top: 6px;
+}
+
+button:hover {
+  background: #1976d2;
+}
+
+/* Output box */
+.output-box {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 10px;
+  height: 100px;
+  overflow-y: auto;
+  border-radius: 4px;
+}
+
+/* Piccolo testo */
+small {
+  display: block;
+  margin-top: 10px;
+  color: #777;
+  font-size: 0.85rem;
+}

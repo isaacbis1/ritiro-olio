@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Ritiro Olio - Demo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Ritiro Olio - Demo</h1>
+    
+    <!-- Sezione Login -->
+    <div class="section login-section">
+      <h2>Login</h2>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="admin@olio.com" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="admin123" />
+      </div>
+      <button id="login-btn">Login</button>
+      <small>
+        <strong>Admin Credentials:</strong> admin@olio.com / admin123
+      </small>
+    </div>
+
+    <!-- Sezione Creazione Nuovo Utente -->
+    <div class="section register-section">
+      <h2>Crea Nuovo Utente</h2>
+      <div class="form-group">
+        <label for="new-email">Email</label>
+        <input type="email" id="new-email" placeholder="esempio@dominio.com" />
+      </div>
+      <div class="form-group">
+        <label for="new-password">Password</label>
+        <input type="password" id="new-password" placeholder="********" />
+      </div>
+      <button id="create-user-btn">Crea Utente</button>
+    </div>
+
+    <!-- Sezione Logout -->
+    <div class="section logout-section">
+      <h2>Logout</h2>
+      <button id="logout-btn">Logout</button>
+    </div>
+
+    <!-- Sezione Messaggi output -->
+    <div class="section output-section">
+      <h2>Output</h2>
+      <div id="output" class="output-box"></div>
+    </div>
+  </div>
+
+  <!-- Importiamo lo script come modulo -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
