@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  /* Sfondo gradiente */
+  background: linear-gradient(135deg, #eeeeee 30%, #ffffff 100%);
+  min-height: 100vh;
+}
+
+/* Container */
+.container {
+  max-width: 650px;
+}
+
+/* Card e box shadow */
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+/* Titoli */
+h1, h2, h4 {
+  color: #333;
+}
+
+/* Bottoni con transizione */
+.btn {
+  font-weight: bold;
+  transition: transform 0.2s ease;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
